@@ -1,20 +1,18 @@
 # 🎨 Design Pattern in Laravel: Factory Method
-
-این پروژه یک مثال ساده از **الگوی طراحی Factory Method** در لاراول است.  
-هدف اینه که با یک سناریوی واقعی و ساده، مفهوم Factory Method رو یاد بگیریم.
-
----
-
-## 📖 سناریو
-ما یک سیستم ارسال اعلان (Notification) داریم.  
-کاربر می‌تونه پیام رو از طریق **ایمیل** یا **SMS** دریافت کنه.  
-به جای اینکه همه‌جا مستقیم کلاس‌ها رو `new` کنیم، از **Factory Method** استفاده می‌کنیم تا انتخاب نوع اعلان در یک نقطه متمرکز بشه.
+This project is a simple example of the Factory Method design pattern in Laravel.
+The goal is to learn the concept of Factory Method using a real and straightforward scenario.
 
 ---
 
-## 🚀 مراحل پیاده‌سازی
+## 📖 ScenarioWe have a notification system.
+The user can receive messages via Email or SMS.
+Instead of directly creating instances of classes everywhere with new, we use a Factory Method to centralize the selection of the notification type in one place.
 
-### 1. تعریف Interface مشترک
+---
+
+## 🚀 Implementation Steps
+
+### 1. Define a Common Interface
 ```php
 // app/Contracts/Notifier.php
 namespace App\Contracts;
@@ -26,7 +24,7 @@ interface Notifier
 ```
 
 
-### 2. ساخت کلاس‌های پیاده‌سازی (Concrete Classes)
+### 2. Create the Concrete Classes
 ```php
 // app/Services/EmailNotifier.php
 namespace App\Services;
@@ -37,7 +35,7 @@ class EmailNotifier implements Notifier
 {
     public function send(string $message): string
     {
-        return "📧 ایمیل ارسال شد: {$message}";
+       return "📧 Email sent: {$message}";
     }
 }
 ```
@@ -51,12 +49,12 @@ class SMSNotifier implements Notifier
 {
     public function send(string $message): string
     {
-        return "📱 پیامک ارسال شد: {$message}";
+        return "📱 SMS sent: {$message}";
     }
 }
 ```
 
-###  3. پیاده‌سازی Factory Method
+###  3. Implement the Factory Method
 ```php
 // app/Factories/NotifierFactory.php
 namespace App\Factories;
@@ -72,14 +70,14 @@ class NotifierFactory
         return match ($type) {
             'email' => new EmailNotifier(),
             'sms'   => new SMSNotifier(),
-            default => throw new \Exception("Notifier type {$type} پشتیبانی نمی‌شود."),
+            default => throw new \Exception("Notifier type {$type} is not supported."),
         };
     }
 }
 ```
 
 
-### 4. استفاده در Controller
+### 4. Use It in a Controller
 ```php
 // app/Http/Controllers/NotificationController.php
 namespace App\Http\Controllers;
@@ -95,13 +93,13 @@ class NotificationController extends Controller
 
         $notifier = NotifierFactory::create($type);
 
-        return $notifier->send('سلام! این یک تست Factory Method است.');
+        return $notifier->send('Hello! This is a Factory Method test.');
     }
 }
 ```
 
 
-### 5. تعریف Route
+### 5. Define the Route
 ```php
 // routes/web.php
 use App\Http\Controllers\NotificationController;
@@ -109,25 +107,22 @@ use App\Http\Controllers\NotificationController;
 Route::get('/notify', [NotificationController::class, 'send']);
 ```
 
-🔍 تست
+🔍 Testing
 
-- رفتن به /notify?type=email
-➝ خروجی: 📧 ایمیل ارسال شد: سلام! این یک تست Factory Method است.
-
-- رفتن به /notify?type=sms
-➝ خروجی: 📱 پیامک ارسال شد: سلام! این یک تست Factory Method است.
-
+- Go to /notify?type=email
+➝ Output: 📧 Email sent: Hello! This is a Factory Method test.
+- Go to /notify?type=sms
+➝ Output: 📱 SMS sent: Hello! This is a Factory Method test.
 
 
 
-📌 نکته
 
-اینجا ما:
+📌 Note
 
-یک Interface مشترک ساختیم (Notifier).
+Here we:
 
-چند کلاس پیاده‌سازی مختلف داریم (EmailNotifier, SMSNotifier).
-
-با استفاده از Factory Method تعیین می‌کنیم کدوم کلاس ساخته بشه.
-اینطوری کد ما loosely coupled و قابل توسعه میشه.
-[نسخه فارسی](./README.fa.md)
+Created a common interface (Notifier).
+Built multiple concrete implementations (EmailNotifier, SMSNotifier).
+Used the Factory Method to decide which class to instantiate.
+This makes our code loosely coupled and extensible.
+[Persian Version](./README.fa.md)
