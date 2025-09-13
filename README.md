@@ -130,3 +130,4 @@ Route::get('/notify', [NotificationController::class, 'send']);
 
 با استفاده از Factory Method تعیین می‌کنیم کدوم کلاس ساخته بشه.
 اینطوری کد ما loosely coupled و قابل توسعه میشه.
+[نسخه فارسی](./README.fa.md)
